@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  web:
+    restart: always
+    image: prometheus-flask:latest
+    container_name: prometheus-flask
+    volumes:
+      - .:/prometheus-flask
+    expose:
+      - "5000"
+    ports:
+      - "5000:5000"
+    command:
+      - sh
+      - -c
+      - |
+        pip3 install -i https://pypi.douban.com/simple/ -r requirements.txt
+        python app.py
