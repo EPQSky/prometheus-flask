@@ -7,11 +7,12 @@ import Alert
 app = Flask(__name__)
 
 
-@app.route('/alertinfo', methods=['POST'])
+@app.route('/alert-info', methods=['POST'])
 def alert_data():
     data = request.get_data()
     json_re = json.loads(data)
     json.dumps(json_re)
+    print(json_re)
     Alert.send_alert(json_re)
     return json_re
 

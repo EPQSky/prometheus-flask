@@ -15,27 +15,26 @@ def parse_time(*args):
     return times
 
 
-def alert(types, levels, times, instances):
+def alert(types, levels, times, instances, summary):
     params = json.dumps({
         "msgtype": "text",
         "text":
             {
-                "content": "**********告警通知**********\n告警类型: {0}\n告警级别: {1}\n故障时间: {2}\n故障实例: {3}".format(types, levels,
-                                                                                                         times[0],
-                                                                                                         instances)
+                "content": "**********告警通知**********\n告警类型: {0}\n告警级别: {1}\n故障时间: {2}\n故障实例: {3}\n故障总结：{4}".format(
+                    types, levels, times[0], instances, summary)
             }
     })
 
     return params
 
 
-def recive(types, levels, times, instances):
+def recive(types, levels, times, instances, summary):
     params = json.dumps({
         "msgtype": "text",
         "text":
             {
-                "content": "**********恢复通知**********\n告警类型: {0}\n告警级别: {1}\n故障时间: {2}\n\n恢复时间: {3}\n故障实例: {4}".format(
-                    types, levels, times[0], times[1], instances)
+                "content": "**********恢复通知**********\n告警类型: {0}\n告警级别: {1}\n故障时间: {2}\n\n恢复时间: {3}\n故障实例: {4}\n故障总结：{5}".format(
+                    types, levels, times[0], times[1], instances, summary)
             }
     })
 
@@ -54,9 +53,9 @@ def webhook_url(params):
 def send_alert(json_re):
     for i in json_re['alerts']:
         if i['status'] == 'firing':
-            webhook_url(alert(i['labels']['alertname'], i['labels']['severity'], parse_time(i['startsAt']),
-                              i['labels']['instance']))
+            webhook_url(alert(i['labels']['alertname'], i['labels']['level'], parse_time(i['startsAt']),
+                              i['labels']['instance'], i['annotations']['summary']))
         elif i['status'] == 'resolved':
             webhook_url(
-                recive(i['labels']['alertname'], i['labels']['severity'], parse_time(i['startsAt'], i['endsAt']),
-                       i['labels']['instance']))
+                recive(i['labels']['alertname'], i['labels']['level'], parse_time(i['startsAt'], i['endsAt']),
+                       i['labels']['instance'], i['annotations']['summary']))
