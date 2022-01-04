@@ -10,18 +10,23 @@ def parse_time(*args):
     for dates in args:
         eta_temp = dates
         fd = datetime.datetime.strptime(eta_temp, "%Y-%m-%dT%H:%M:%S.%fZ")
-        eta = (fd + datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S.%f")
+        eta = (fd + datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
         times.append(eta)
     return times
 
 
 def alert(types, levels, times, instances, summary):
     params = json.dumps({
-        "msgtype": "text",
-        "text":
+        "msgtype": "markdown",
+        "markdown":
             {
-                "content": "**********告警通知**********\n告警类型: {0}\n告警级别: {1}\n故障时间: {2}\n故障实例: {3}\n故障总结：{4}".format(
-                    types, levels, times[0], instances, summary)
+                "content": "## <font color=\"#F56C6C\">告警通知</font>\n"
+                           "<font color=\"E6A23C\">**{0}**</font>\n"
+                           "> **告警类型:** <font color=\"\\#909399\">{1}</font>\n"
+                           "> **告警级别:** <font color=\"\\#909399\">{2}</font>\n"
+                           "> **故障实例:** <font color=\"\\#909399\">{3}</font>\n"
+                           "> **故障时间:** <font color=\"\\#909399\">{4}</font>".format(
+                    summary, types, levels, instances, times[0])
             }
     })
 
@@ -30,11 +35,17 @@ def alert(types, levels, times, instances, summary):
 
 def recive(types, levels, times, instances, summary):
     params = json.dumps({
-        "msgtype": "text",
-        "text":
+        "msgtype": "markdown",
+        "markdown":
             {
-                "content": "**********恢复通知**********\n告警类型: {0}\n告警级别: {1}\n故障时间: {2}\n\n恢复时间: {3}\n故障实例: {4}\n故障总结：{5}".format(
-                    types, levels, times[0], times[1], instances, summary)
+                "content": "## <font color=\"#67C23A\">恢复通知</font>\n"
+                           "<font color=\"E6A23C\">**{0}**</font>\n"
+                           "> **告警类型:** <font color=\"\\#909399\">{1}</font>\n"
+                           "> **告警级别:** <font color=\"\\#909399\">{2}</font>\n"
+                           "> **故障实例:** <font color=\"\\#909399\">{3}</font>\n"
+                           "> **故障时间:** <font color=\"\\#909399\">{4}</font>\n"
+                           "> **恢复时间:** <font color=\"\\#909399\">{5}</font>".format(
+                    summary, types, levels, instances, times[0], times[1])
             }
     })
 
